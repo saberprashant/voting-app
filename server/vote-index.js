@@ -17,24 +17,24 @@ var poll = {
 }
 
 var voteCount = {
-  'Chinese' : 0,
-  'Indian' : 0,
-  'American' : 0,
-  'Italian' : 0
+  title: "Which cuisine is best in the world?",
+  options: ['Chinese', 'Indian', 'American', 'Italian'],
+  responses:{}
 };
 
 io.on("connection", function (socket) {
   console.log('a client connected');
 
   io.emit('polls', poll)
+  io.emit('votes', voteCount)
 
   socket.on('polls', function(vote){
     voteCount = voteCount + count;
     io.emit('polls', voteCount);
   });
 
-  socket.on('votes', function(count){
-    voteCount = voteCount + count;
+  socket.on('votes', function(selectedOpt){
+    voteCount.responses[selectedOpt]=(voteCount.responses[selectedOpt])?voteCount.responses[selectedOpt]+1:1;
     io.emit('votes', voteCount);
   });
   
