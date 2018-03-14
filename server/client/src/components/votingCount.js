@@ -5,7 +5,7 @@ import {Label, FormGroup, Radio, Button} from 'react-bootstrap';
 
 import '../style/votingCount.css';
 
-
+const socket = socketIOClient('http://127.0.0.1:4002');
 class Vote extends Component {
   constructor() {
     super();
@@ -33,8 +33,9 @@ class Vote extends Component {
   componentWillMount() {
     const endpoint  = this.state.endpoint;
     const socket = socketIOClient(endpoint);
-    socket.on('polls', function(data) {    // I transfered this to did moount but it worked in will mount
-      this.setState({poll: data})
+    socket.on('polls', function(data) {  
+      this.setState({poll: data},()=>{
+      })
     }.bind(this));
 
     // socket.on('votes', function(data) {
@@ -47,7 +48,6 @@ class Vote extends Component {
 
   componentDidMount() {
     const endpoint  = this.state.endpoint;
-    const socket = socketIOClient(endpoint);
 
     // socket.on('polls', function(data) {
     //   this.setState({poll: data})
@@ -135,11 +135,14 @@ class Vote extends Component {
           <div>
             {/*this.state.voteOptions*/}    {/*here I want to render all the radio buttons*/} 
           </div>
-
-          <Radio name="radioGroup">
-            {this.state.test.options[2]}    {/*testing from test data(this.state.test)*/}
-          </Radio>
-          
+          {
+            (this.state.poll.options&&this.state.poll.options.length>0)?
+            this.state.poll.options.map((item,index)=>{
+              return <Radio name="radioGroup">
+                        {this.state.poll.options[index]}    {/*testing from test data(this.state.test)*/}
+                    </Radio>
+            }):<div></div>
+          }          
           <Button type="submit" bsStyle="info">Vote Now</Button>
         </FormGroup>
       </form>
